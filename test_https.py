@@ -11,18 +11,22 @@ def health_check():
     """Проверка здоровья сервиса"""
     return jsonify({"status": "ok", "message": "HTTPS Test Server is running"}), 200
 
-@app.route('/data', methods=['POST'])
+@app.route('/data', methods=['POST', 'PUT'])
 def receive_data():
-    """Эндпоинт для получения данных"""
+    """Эндпоинт для получения данных (POST или PUT)"""
     try:
         data = request.get_json(force=True)
     except Exception as e:
         app.logger.error("Invalid JSON: %s", e)
         return jsonify({"status":"error", "message":"invalid json"}), 400
 
-    app.logger.info("Received data: %s", data)
-    # тут можно сохранить в БД, в файл или обработать
-    return jsonify({"status":"ok", "received": data}), 200
+    app.logger.info("Received data (%s): %s", request.method, data)
+    return jsonify({
+        "status": "ok",
+        "method": request.method,
+        "received": data
+    }), 200
+
 
 @app.route('/test', methods=['GET'])
 def test_endpoint():
