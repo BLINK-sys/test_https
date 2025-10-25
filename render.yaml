@@ -3,7 +3,9 @@ services:
     name: test-https-server
     env: python
     buildCommand: pip install -r requirements.txt
-    startCommand: gunicorn test_https:app
+    startCommand: gunicorn test_https:app --bind 0.0.0.0:$PORT
     envVars:
       - key: FLASK_ENV
         value: production
+      - key: PORT
+        value: 10000
